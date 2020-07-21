@@ -8,9 +8,21 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  counter.getNextUniqueId( (err, id) => {
+    // fs write file to our\ data in datastore directory
+    fs.writeFile(`./datastore/data/${id}.txt`, text, (err) => {
+      if (err) {
+        // callback(new Error(`No item with id: ${id}`));
+      } else {
+        callback(null, { id, text });
+      }
+    });
+    //they look like 000001.txt, which should contain text
+    //if error in writing process, give error
+    //else, write the text into the file (give it callback on line 18)
+  });
+  // items[id] = text;
+  // callback(null, { id, text });
 };
 
 exports.readAll = (callback) => {
@@ -49,6 +61,25 @@ exports.delete = (id, callback) => {
     callback();
   }
 };
+
+//delete file
+// exports.create = (text, callback) => {
+//   counter.getNextUniqueId( (err, id) => {
+//     // fs write file to our\ data in datastore directory
+//     fs.writeFile(`./datastore/data/${id}.txt`, text, (err) => {
+//       if (err) {
+//         callback(new Error(`No item with id: ${id}`));
+//       } else {
+//         callback(null, { id, text });
+//       }
+//     });
+//     //they look like 000001.txt, which should contain text
+//     //if error in writing process, give error
+//     //else, write the text into the file (give it callback on line 18)
+//   });
+//   // items[id] = text;
+//   // callback(null, { id, text });
+// };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
