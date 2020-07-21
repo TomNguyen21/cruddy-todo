@@ -10,11 +10,12 @@ var items = {};
 exports.create = (text, callback) => {
   counter.getNextUniqueId( (err, id) => {
     // fs write file to our\ data in datastore directory
-    fs.writeFile(`./datastore/data/${id}.txt`, text, (err) => {
+    fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => { //i.e. ./datastore/data/000001.txt
       if (err) {
-        // callback(new Error(`No item with id: ${id}`));
+        throw ('error creating todo');
       } else {
         callback(null, { id, text });
+        // { id, text });
       }
     });
     //they look like 000001.txt, which should contain text
@@ -26,19 +27,49 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      // callback(null, []);
+      console.log('error');
+    } else {
+      console.log(files, "files");
+      // callback(null, ({id, id}));
+      // callback(null, [].push(id));
+    }
   });
-  callback(null, data);
 };
 
+//datadir, foreach, map, putting {}, push
+
+// {id: '00001', text: '00001'},
+// { id: [ '00001.txt', '00002.txt' ] }
+
+// exports.readAll = (callback) => {
+//   fs.readdir(exports.dataDir, (err, id) => {
+//     if (err) {
+//       callback(null, []);
+//     } else {
+//       callback(null, [].push(id) _.map(exports.dataDir, (id) => {
+//         return id;
+//         console.log(exports.dataDir, "exports data dir");
+//         console.log(id, "id");
+//       }));
+//     }
+//   });
+//   // var data = _.map(items, (text, id) => {
+//   //   return { id, text };
+//   // });
+//   // callback(null, []); //data);
+// };
+
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  fs.readFile(`${exports.dataDir}/${id}.txt`, 'utf8', (err, text) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      callback(null, {id, text});
+    }
+  });
 };
 
 exports.update = (id, text, callback) => {
@@ -61,25 +92,6 @@ exports.delete = (id, callback) => {
     callback();
   }
 };
-
-//delete file
-// exports.create = (text, callback) => {
-//   counter.getNextUniqueId( (err, id) => {
-//     // fs write file to our\ data in datastore directory
-//     fs.writeFile(`./datastore/data/${id}.txt`, text, (err) => {
-//       if (err) {
-//         callback(new Error(`No item with id: ${id}`));
-//       } else {
-//         callback(null, { id, text });
-//       }
-//     });
-//     //they look like 000001.txt, which should contain text
-//     //if error in writing process, give error
-//     //else, write the text into the file (give it callback on line 18)
-//   });
-//   // items[id] = text;
-//   // callback(null, { id, text });
-// };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
