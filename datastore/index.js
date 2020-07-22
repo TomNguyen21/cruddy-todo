@@ -14,7 +14,7 @@ exports.create = (text, callback) => {
       if (err) {
         throw ('error creating todo');
       } else {
-        callback(null, { id, text });
+        callback(null, { id: id, text: text });
         // { id, text });
       }
     });
@@ -32,11 +32,25 @@ exports.readAll = (callback) => {
       // callback(null, []);
       console.log('error');
     } else {
-      console.log(files, "files");
-      // callback(null, ({id, id}));
-      // callback(null, [].push(id));
+      // console.log(files, "files");
+      var arr = [];
+      files.forEach( (file) => {
+        fs.readFile(`${exports.dataDir}/${file}`, 'utf8', (err, text) => {
+          if (err) {
+            callback(err);
+          } else {
+            var obj = {id: `${file}`, text: text};
+            console.log(obj);
+            arr.push(obj);
+            console.log(arr);
+          }
+        });
+      });
+      callback(null, arr);
     }
+    // callback(null, arr);
   });
+  // callback(null, arr);
 };
 
 //datadir, foreach, map, putting {}, push
@@ -67,6 +81,7 @@ exports.readOne = (id, callback) => {
     if (err) {
       callback(new Error(`No item with id: ${id}`));
     } else {
+      // var text = text.toString();
       callback(null, {id, text});
     }
   });
